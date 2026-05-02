@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd nagaoka-igo && npm install && npm run build",
+  "outputDirectory": "nagaoka-igo/.next",
+  "installCommand": "cd nagaoka-igo && npm install",
+  "framework": "nextjs"
+}
