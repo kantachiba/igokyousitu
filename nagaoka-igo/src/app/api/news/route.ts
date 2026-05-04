@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { getAllNews, createNews } from "@/lib/news-store";
 import type { NewsCategory } from "@/data/news";
 
-const ADMIN_SECRET = process.env.ADMIN_SECRET ?? "changeme-secret";
+const ADMIN_SECRET = process.env.ADMIN_SECRET;
 
 export async function GET() {
   return NextResponse.json(await getAllNews());
@@ -11,7 +11,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const cookieStore = await cookies();
-  if (cookieStore.get("admin_session")?.value !== ADMIN_SECRET) {
+  if (!ADMIN_SECRET || cookieStore.get("admin_session")?.value !== ADMIN_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

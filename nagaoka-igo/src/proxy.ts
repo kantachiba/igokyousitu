@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const ADMIN_SECRET = process.env.ADMIN_SECRET ?? "changeme-secret";
+const ADMIN_SECRET = process.env.ADMIN_SECRET;
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const session = request.cookies.get("admin_session");
-  const isAuthenticated = session?.value === ADMIN_SECRET;
+  const isAuthenticated = !!ADMIN_SECRET && session?.value === ADMIN_SECRET;
 
   // Redirect already-authenticated users away from the login page
   if (pathname === "/admin/login") {

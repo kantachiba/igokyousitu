@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { getEventsByMonth, createScheduleEvent } from "@/lib/schedule-store";
 
-const ADMIN_SECRET = process.env.ADMIN_SECRET ?? "changeme-secret";
+const ADMIN_SECRET = process.env.ADMIN_SECRET;
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const cookieStore = await cookies();
-  if (cookieStore.get("admin_session")?.value !== ADMIN_SECRET) {
+  if (!ADMIN_SECRET || cookieStore.get("admin_session")?.value !== ADMIN_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
