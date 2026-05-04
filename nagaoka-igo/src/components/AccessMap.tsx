@@ -1,9 +1,10 @@
-import { SectionHeading } from "./News";
+import SectionHeading from "./SectionHeading";
 import { MapPin, ExternalLink } from "lucide-react";
 
 const ADDRESS = "〒940-0065 新潟県長岡市東坂之上町３丁目１−９ エクスコート今井 4階";
+const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/1Z1YUAh8JMjvfWZMA";
 const GOOGLE_MAPS_EMBED =
-  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3183.5!2d138.850!3d37.450!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5ff5209f0a5d92a1%3A0x1c3a4dd6a4278901!2z5paw5r6k5biC5p2-5Z2C5LmF55S677yT5LiB55uu77yR4oiS77yZ!5e0!3m2!1sja!2sjp!4v1700000000000!5m2!1sja!2sjp";
+  "https://www.google.com/maps?q=長岡囲碁研究会&hl=ja&output=embed";
 
 export default function AccessMap() {
   return (
@@ -48,7 +49,7 @@ export default function AccessMap() {
               </dl>
 
               <a
-                href={`https://maps.google.com/?q=${encodeURIComponent(ADDRESS)}`}
+                href={GOOGLE_MAPS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-5 inline-flex items-center gap-2 text-sm text-[#5a7a5a] hover:text-[#2d4a35] transition-colors"
@@ -61,7 +62,7 @@ export default function AccessMap() {
             {/* Accessibility note */}
             <div className="bg-[#f0f7f0] border border-[#5a7a5a]/20 rounded-md p-4">
               <p className="text-xs text-[#2d4a35] leading-relaxed">
-                🚃 JR長岡駅より車で約10分。
+                JR長岡駅より徒歩で約6分。
                 <br />
                 お車でのお越しの際は近隣駐車場をご利用ください。
                 <br />

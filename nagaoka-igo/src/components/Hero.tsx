@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { FaInstagram } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 export default function Hero() {
   return (
@@ -56,12 +57,10 @@ export default function Hero() {
             <span className="text-[#5a7a5a]">もっと身近に。</span>
           </h1>
           <div className="brush-divider my-6 w-32 mx-auto" />
-          <p className="text-base sm:text-lg text-[#555] leading-relaxed max-w-xl font-light">
-            初心者から有段者まで、どなたでも歓迎。
+          <p className="text-base sm:text-lg text-[#555] leading-relaxed max-w-xl mx-auto text-center font-light">
+            未経験者から有段者まで、どなたでも歓迎。
             <br />
-            日曜日を中心に、カフェでの囲碁会や
-            <br className="hidden sm:block" />
-            認定会・交流試合を開催しています。
+            こども向けの囲碁教室や大会を開催しています。
           </p>
         </div>
 
@@ -71,11 +70,13 @@ export default function Hero() {
           style={{ animationDelay: "0.3s" }}
         >
           <Link
-            href="#about"
-            className="inline-flex items-center justify-center px-8 py-3 bg-[#1a1a1a] text-[#f7f4ef] text-sm tracking-wider hover:bg-[#2d4a35] transition-colors duration-300 rounded-sm font-medium"
-            style={{ fontFamily: "var(--font-noto-serif)" }}
+            href="https://x.com/QWXRuoXHUvdP8BH"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-[#1a1a1a] text-[#f7f4ef] text-sm tracking-wider hover:bg-[#2d4a35] transition-colors duration-300 rounded-sm font-medium"
           >
-            研究会について
+            <FaXTwitter size={15} />
+            X (Twitter)
           </Link>
           <Link
             href="https://www.instagram.com/nagaokaigokenkyukai"

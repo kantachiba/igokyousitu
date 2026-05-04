@@ -1,0 +1,15 @@
+runConfig:
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+  minInstances: 0
+
+env:
+  - variable: ADMIN_PASSWORD
+    secret: admin-password
+    availability:
+      - RUNTIME
+  - variable: ADMIN_SECRET
+    secret: admin-secret
+    availability:
+      - RUNTIME

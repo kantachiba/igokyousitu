@@ -1,17 +1,15 @@
 "use client";
-import { useState } from "react";
-import { SectionHeading } from "./News";
+import { useState, useEffect, useMemo } from "react";
+import SectionHeading from "./SectionHeading";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 
-// 活動曜日: 0=日, 1=月, 2=火, 3=水, 4=木, 5=金, 6=土
-const ACTIVITY_DAYS: Record<
-  number,
-  { label: string; time: string; color: string; bg: string }
-> = {
-  1: { label: "月", time: "16:00〜", color: "text-white", bg: "bg-[#2d4a35]" },
-  5: { label: "金", time: "17:00〜", color: "text-white", bg: "bg-[#5a7a5a]" },
-  6: { label: "土", time: "13:00〜", color: "text-white", bg: "bg-[#7fa87f]" },
-};
+export interface ScheduleEvent {
+  id: string;
+  date: string;
+  startTime: string;
+  title: string;
+  description?: string;
+}
 
 const WEEK_LABELS = ["日", "月", "火", "水", "木", "金", "土"];
 
@@ -23,20 +21,36 @@ function getFirstDayOfWeek(year: number, month: number) {
   return new Date(year, month, 1).getDay();
 }
 
-function isSunday(year: number, month: number, day: number) {
-  return new Date(year, month, day).getDay() === 0;
-}
-
 export default function Schedule() {
   const today = new Date();
   const [current, setCurrent] = useState({
     year: today.getFullYear(),
     month: today.getMonth(),
   });
+  const [events, setEvents] = useState<ScheduleEvent[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const { year, month } = current;
   const daysInMonth = getDaysInMonth(year, month);
   const firstDow = getFirstDayOfWeek(year, month);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/api/schedule?year=${year}&month=${month + 1}`)
+      .then((r) => r.json())
+      .then((data) => setEvents(Array.isArray(data) ? data : []))
+      .catch(() => setEvents([]))
+      .finally(() => setLoading(false));
+  }, [year, month]);
+
+  const eventsByDate = useMemo(() => {
+    const map: Record<string, ScheduleEvent[]> = {};
+    for (const e of events) {
+      if (!map[e.date]) map[e.date] = [];
+      map[e.date].push(e);
+    }
+    return map;
+  }, [events]);
 
   const prevMonth = () => {
     setCurrent((c) =>
@@ -53,21 +67,14 @@ export default function Schedule() {
     );
   };
 
-  // カレンダーのグリッドセル（先頭の空白 + 日付）
+  const toDateStr = (day: number) =>
+    `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
   const cells: (number | null)[] = [
     ...Array(firstDow).fill(null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
-  // 6行になるよう末尾を埋める
   while (cells.length % 7 !== 0) cells.push(null);
-
-  // 活動日一覧（今月分）
-  const activityList = Array.from({ length: daysInMonth }, (_, i) => i + 1)
-    .map((day) => {
-      const dow = new Date(year, month, day).getDay();
-      return ACTIVITY_DAYS[dow] ? { day, dow, ...ACTIVITY_DAYS[dow] } : null;
-    })
-    .filter(Boolean) as { day: number; dow: number; label: string; time: string; color: string; bg: string }[];
 
   const monthLabel = `${year}年${month + 1}月`;
 
@@ -75,17 +82,6 @@ export default function Schedule() {
     <section id="schedule" className="py-20 sm:py-28 bg-[#f7f4ef]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <SectionHeading en="Schedule" ja="活動スケジュール" />
-
-        {/* Legend */}
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
-          {Object.values(ACTIVITY_DAYS).map((v) => (
-            <div key={v.label} className="flex items-center gap-2 text-sm text-[#444]">
-              <span className={`inline-block w-4 h-4 rounded-sm ${v.bg}`} />
-              <span>{v.label}曜日</span>
-              <span className="text-[#8b7355]">{v.time}</span>
-            </div>
-          ))}
-        </div>
 
         {/* Calendar card */}
         <div className="bg-white/80 border border-[#e5ddd0] rounded-md shadow-sm overflow-hidden">
@@ -132,7 +128,7 @@ export default function Schedule() {
           </div>
 
           {/* Day cells */}
-          <div className="grid grid-cols-7">
+          <div className={`grid grid-cols-7 transition-opacity ${loading ? "opacity-50" : ""}`}>
             {cells.map((day, idx) => {
               if (day === null) {
                 return (
@@ -144,7 +140,9 @@ export default function Schedule() {
               }
 
               const dow = new Date(year, month, day).getDay();
-              const activity = ACTIVITY_DAYS[dow];
+              const dateStr = toDateStr(day);
+              const dayEvents = eventsByDate[dateStr] ?? [];
+              const hasEvents = dayEvents.length > 0;
               const isToday =
                 today.getFullYear() === year &&
                 today.getMonth() === month &&
@@ -155,13 +153,12 @@ export default function Schedule() {
               return (
                 <div
                   key={day}
-                  className={`min-h-[56px] sm:min-h-[72px] p-1.5 sm:p-2 border-b border-r border-[#ede8e0] last-of-type:border-r-0 flex flex-col gap-1 ${
-                    activity ? "bg-white" : "bg-[#faf8f5]"
+                  className={`min-h-[56px] sm:min-h-[72px] p-1 sm:p-1.5 border-b border-r border-[#ede8e0] flex flex-col gap-0.5 ${
+                    hasEvents ? "bg-white" : "bg-[#faf8f5]"
                   } ${(idx + 1) % 7 === 0 ? "border-r-0" : ""}`}
                 >
-                  {/* Day number */}
                   <span
-                    className={`text-xs sm:text-sm font-medium w-6 h-6 flex items-center justify-center rounded-full ${
+                    className={`text-xs sm:text-sm font-medium w-6 h-6 flex items-center justify-center rounded-full flex-shrink-0 ${
                       isToday
                         ? "bg-[#2d4a35] text-white"
                         : isSun
@@ -174,19 +171,17 @@ export default function Schedule() {
                     {day}
                   </span>
 
-                  {/* Activity badge */}
-                  {activity && (
+                  {dayEvents.slice(0, 2).map((ev) => (
                     <span
-                      className={`hidden sm:block text-[10px] leading-none px-1.5 py-1 rounded-sm ${activity.bg} ${activity.color} font-medium text-center`}
+                      key={ev.id}
+                      className="hidden sm:block text-[9px] leading-tight px-1 py-0.5 rounded-sm bg-[#2d4a35] text-white font-medium truncate"
+                      title={`${ev.startTime}〜 ${ev.title}`}
                     >
-                      {activity.time}
+                      {ev.startTime}〜 {ev.title}
                     </span>
-                  )}
-                  {/* Mobile: just a dot indicator */}
-                  {activity && (
-                    <span
-                      className={`sm:hidden mx-auto w-1.5 h-1.5 rounded-full ${activity.bg}`}
-                    />
+                  ))}
+                  {hasEvents && (
+                    <span className="sm:hidden mx-auto w-1.5 h-1.5 rounded-full bg-[#2d4a35] flex-shrink-0" />
                   )}
                 </div>
               );
@@ -204,40 +199,43 @@ export default function Schedule() {
               {month + 1}月の活動日一覧
             </p>
           </div>
-          {activityList.length === 0 ? (
+          {loading ? (
+            <p className="text-sm text-[#8b7355] px-5 py-4">読み込み中...</p>
+          ) : events.length === 0 ? (
             <p className="text-sm text-[#8b7355] px-5 py-4">活動日はありません</p>
           ) : (
             <ul className="divide-y divide-[#ede8e0]">
-              {activityList.map((item) => (
-                <li
-                  key={item.day}
-                  className="flex items-center gap-4 px-5 py-3 hover:bg-[#f7f4ef]/60 transition-colors"
-                >
-                  <span
-                    className={`w-8 h-8 rounded-sm flex items-center justify-center text-xs font-medium flex-shrink-0 ${item.bg} ${item.color}`}
+              {events.map((ev) => {
+                const d = new Date(ev.date + "T00:00:00");
+                const dowLabel = WEEK_LABELS[d.getDay()];
+                const dayNum = d.getDate();
+                return (
+                  <li
+                    key={ev.id}
+                    className="flex items-start gap-4 px-5 py-3 hover:bg-[#f7f4ef]/60 transition-colors"
                   >
-                    {item.label}
-                  </span>
-                  <div>
-                    <span className="text-sm font-medium text-[#1a1a1a]">
-                      {month + 1}月{item.day}日（{item.label}）
+                    <span className="w-8 h-8 rounded-sm flex items-center justify-center text-xs font-medium flex-shrink-0 bg-[#2d4a35] text-white">
+                      {dowLabel}
                     </span>
-                  </div>
-                  <div className="ml-auto flex items-center gap-1.5 text-sm text-[#5a7a5a]">
-                    <Clock size={13} strokeWidth={1.5} />
-                    {item.time}
-                  </div>
-                </li>
-              ))}
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-medium text-[#1a1a1a]">
+                        {month + 1}月{dayNum}日（{dowLabel}）
+                      </span>
+                      <p className="text-xs text-[#555] mt-0.5 truncate">{ev.title}</p>
+                    </div>
+                    <div className="ml-auto flex items-center gap-1.5 text-sm text-[#5a7a5a] flex-shrink-0">
+                      <Clock size={13} strokeWidth={1.5} />
+                      {ev.startTime}〜
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
 
-        {/* Note */}
         <p className="mt-6 text-center text-sm text-[#8b7355] italic">
-          ※ 日曜日はカフェ囲碁会・認定会・交流試合などの特別イベントも開催します。
-          <br className="hidden sm:block" />
-          詳細はお知らせ・Instagramをご確認ください。
+          ※ 詳細はお知らせ・Instagramをご確認ください。
         </p>
       </div>
     </section>

@@ -1,26 +1,26 @@
-import { SectionHeading } from "./News";
-import { Users, Award, Sword, Coffee } from "lucide-react";
+import SectionHeading from "./SectionHeading";
+import { BookOpen, Trophy, GraduationCap, CalendarDays } from "lucide-react";
 
 const features = [
   {
-    icon: Coffee,
-    title: "カフェ囲碁会",
-    desc: "毎月日曜日にカフェで気軽に囲碁を楽しめる会を開催。初心者でも安心してご参加いただけます。",
+    icon: CalendarDays,
+    title: "さまざまなイベント",
+    desc: "コーヒーを片手に囲碁を楽しんだり、レトロゲームを楽しむイベントなどを開催しています",
   },
   {
-    icon: Award,
-    title: "級の認定会",
-    desc: "定期的に実力を測る認定会を実施。自分の棋力を公式に証明できる機会を提供しています。",
+    icon: Trophy,
+    title: "大会・認定会",
+    desc: "棋力の認定会を開催しています。成績優秀者には認定証を贈呈いたします。",
   },
   {
-    icon: Sword,
-    title: "交流試合",
-    desc: "他のサークルや地域のプレイヤーとの交流試合を定期開催。切磋琢磨できる環境があります。",
+    icon: GraduationCap,
+    title: "教室",
+    desc: "囲碁を全く知らない方でも一から学べる教室を開催しています。",
   },
   {
-    icon: Users,
-    title: "アットホームな雰囲気",
-    desc: "初心者から有段者まで、年齢・経験問わず歓迎。囲碁を通じた新しいつながりが生まれる場所。",
+    icon: BookOpen,
+    title: "自習室",
+    desc: "平日の夕方はこどもの宿題や自主学習、大人の資格取得の勉強のための自習室として開放しています",
   },
 ];
 
@@ -41,9 +41,9 @@ export default function About() {
             囲碁の楽しさを長岡から広げています。
           </p>
           <p className="mt-4 text-sm sm:text-base text-[#555] leading-relaxed">
-            ながおか囲碁研究会は、新潟県長岡市を拠点に活動する囲碁愛好家のサークルです。
-            敷居を低くして、誰でも気軽に囲碁と出会えるよう、
-            様々なイベントを企画・運営しています。
+            ながおか囲碁研究会は、新潟県長岡市の囲碁サロンです。
+            <br />
+            誰でも気軽に囲碁と出会えるよう、様々なイベントを企画・開催しています。
           </p>
         </div>
 
