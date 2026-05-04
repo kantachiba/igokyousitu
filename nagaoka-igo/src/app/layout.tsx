@@ -27,6 +27,10 @@ export const metadata: Metadata = {
     locale: "ja_JP",
     type: "website",
   },
+  verification: {
+    // TODO: Google Search Consoleで発行された「HTMLタグ」内の content="..." の文字列をここに貼り付けてください
+    google: "9ZhP6G27nS5pDggYWClbdteYG9v3s-1hgx3vR3Dxfiw",
+  },
 };
 
 export default function RootLayout({

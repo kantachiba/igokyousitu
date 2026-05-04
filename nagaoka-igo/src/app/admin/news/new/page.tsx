@@ -1,14 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Trash2 } from "lucide-react";
 import type { NewsCategory } from "@/data/news";
 
 const categories: NewsCategory[] = ["大会情報", "活動日", "その他"];
 
+const categoryStyles: Record<NewsCategory, string> = {
+  大会情報: "bg-[#f0e8d0] text-[#8b6914]",
+  活動日: "bg-[#e8f0e8] text-[#2d4a35]",
+  その他: "bg-[#f0ebe0] text-[#8b7355]",
+};
+
+interface NewsItem {
+  id: number;
+  title: string;
+  category: NewsCategory;
+  date: string;
+}
+
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
+}
+
+function formatDate(d: string) {
+  const [y, m, day] = d.split("-").map(Number);
+  return `${y}年${m}月${day}日`;
 }
 
 export default function NewNewsPage() {
@@ -19,7 +38,20 @@ export default function NewNewsPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [posted, setPosted] = useState(false);
+
+  const [newsList, setNewsList] = useState<NewsItem[]>([]);
+  const [listLoading, setListLoading] = useState(false);
+
   const router = useRouter();
+
+  useEffect(() => {
+    setListLoading(true);
+    fetch("/api/news")
+      .then((r) => r.json())
+      .then((data) => setNewsList(Array.isArray(data) ? data : []))
+      .catch(() => setNewsList([]))
+      .finally(() => setListLoading(false));
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -33,6 +65,8 @@ export default function NewNewsPage() {
     });
 
     if (res.ok) {
+      const newItem = await res.json();
+      setNewsList((prev) => [newItem, ...prev]);
       setPosted(true);
       setTitle("");
       setBody("");
@@ -44,6 +78,14 @@ export default function NewNewsPage() {
       setError(data.error ?? "投稿に失敗しました");
     }
     setLoading(false);
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm("このお知らせを削除しますか？")) return;
+    const res = await fetch(`/api/news/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setNewsList((prev) => prev.filter((n) => n.id !== id));
+    }
   }
 
   async function handleLogout() {
@@ -65,7 +107,7 @@ export default function NewNewsPage() {
               className="text-xl font-light text-[#1a1a1a]"
               style={{ fontFamily: "var(--font-noto-serif)" }}
             >
-              お知らせを投稿
+              お知らせ管理
             </h1>
           </div>
           <div className="flex items-center gap-5 text-sm">
@@ -100,12 +142,18 @@ export default function NewNewsPage() {
           </div>
         )}
 
-        {/* Form */}
+        {/* Post form */}
         <form
           onSubmit={handleSubmit}
           className="bg-white/80 border border-[#e5ddd0] rounded-sm p-8 space-y-6"
         >
-          {/* Title */}
+          <p
+            className="text-sm font-medium text-[#1a1a1a] border-b border-[#e5ddd0] pb-4"
+            style={{ fontFamily: "var(--font-noto-serif)" }}
+          >
+            新規投稿
+          </p>
+
           <div>
             <label className="block text-xs text-[#8b7355] mb-1.5 tracking-wide">
               タイトル <span className="text-red-400">*</span>
@@ -120,7 +168,6 @@ export default function NewNewsPage() {
             />
           </div>
 
-          {/* Category + Date */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs text-[#8b7355] mb-1.5 tracking-wide">
@@ -152,7 +199,6 @@ export default function NewNewsPage() {
             </div>
           </div>
 
-          {/* Body */}
           <div>
             <label className="block text-xs text-[#8b7355] mb-1.5 tracking-wide">
               本文 <span className="text-red-400">*</span>
@@ -181,6 +227,53 @@ export default function NewNewsPage() {
             {loading ? "投稿中..." : "投稿する"}
           </button>
         </form>
+
+        {/* News list */}
+        <div className="mt-8 bg-white/80 border border-[#e5ddd0] rounded-sm overflow-hidden">
+          <div className="px-5 py-3 border-b border-[#e5ddd0] bg-[#f7f4ef]/60">
+            <p
+              className="text-sm font-medium text-[#1a1a1a]"
+              style={{ fontFamily: "var(--font-noto-serif)" }}
+            >
+              投稿済みのお知らせ
+            </p>
+          </div>
+          {listLoading ? (
+            <p className="text-sm text-[#8b7355] px-5 py-4">読み込み中...</p>
+          ) : newsList.length === 0 ? (
+            <p className="text-sm text-[#8b7355] px-5 py-4">投稿はありません</p>
+          ) : (
+            <ul className="divide-y divide-[#ede8e0]">
+              {newsList.map((item) => (
+                <li
+                  key={item.id}
+                  className="flex items-center gap-3 px-5 py-3 hover:bg-[#f7f4ef]/60 transition-colors"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium flex-shrink-0 ${categoryStyles[item.category]}`}
+                      >
+                        {item.category}
+                      </span>
+                      <span className="text-xs text-[#8b7355] flex-shrink-0">
+                        {formatDate(item.date)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-[#1a1a1a] mt-0.5 truncate">{item.title}</p>
+                  </div>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="text-[#c0392b]/40 hover:text-[#c0392b] transition-colors flex-shrink-0"
+                    aria-label="削除"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );

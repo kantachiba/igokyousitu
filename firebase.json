@@ -1,7 +1,7 @@
 {
   "apphosting": {
     "backendId": "homepage",
-    "rootDir": "/",
+    "rootDir": "nagaoka-igo",
     "ignore": [
       "node_modules",
       ".git",

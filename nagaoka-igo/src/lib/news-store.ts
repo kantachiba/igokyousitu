@@ -50,6 +50,11 @@ export interface CreateNewsInput {
   date: string;
 }
 
+export async function deleteNews(id: number): Promise<void> {
+  const db = getDb();
+  await db.collection(COLLECTION).doc(String(id)).delete();
+}
+
 export async function createNews(data: CreateNewsInput): Promise<NewsItem> {
   await ensureSeeded();
   const db = getDb();
