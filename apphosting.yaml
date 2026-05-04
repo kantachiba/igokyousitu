@@ -13,5 +13,3 @@ env:
       - RUNTIME
   - variable: ADMIN_SECRET
     secret: admin-secret
-    availability:
-      - RUNTIME
