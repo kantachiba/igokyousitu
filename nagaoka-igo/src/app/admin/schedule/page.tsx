@@ -83,38 +83,43 @@ export default function AdminSchedulePage() {
     setError("");
   };
 
-  const handleAddEvent = async (e: React.FormEvent) => {
+  const handleAddEvent = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedDate || !form.title || !form.startTime) return;
     setPosting(true);
     setError("");
 
-    const res = await fetch("/api/schedule", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        date: selectedDate,
-        startTime: form.startTime,
-        title: form.title,
-        description: form.description || undefined,
-      }),
-    });
+    try {
+      const res = await fetch("/api/schedule", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          date: selectedDate,
+          startTime: form.startTime,
+          title: form.title,
+          description: form.description || undefined,
+        }),
+      });
 
-    if (res.ok) {
-      const newEvent = await res.json();
-      setEvents((prev) =>
-        [...prev, newEvent].sort((a, b) => {
-          if (a.date !== b.date) return a.date.localeCompare(b.date);
-          return a.startTime.localeCompare(b.startTime);
-        })
-      );
-      setForm({ startTime: "19:00", title: "", description: "" });
-      setSelectedDate(null);
-    } else {
-      const data = await res.json();
-      setError(data.error ?? "登録に失敗しました");
+      if (res.ok) {
+        const newEvent = await res.json();
+        setEvents((prev) =>
+          [...prev, newEvent].sort((a, b) => {
+            if (a.date !== b.date) return a.date.localeCompare(b.date);
+            return a.startTime.localeCompare(b.startTime);
+          })
+        );
+        setForm({ startTime: "19:00", title: "", description: "" });
+        setSelectedDate(null);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setError((data as { error?: string }).error ?? "登録に失敗しました");
+      }
+    } catch {
+      setError("通信エラーが発生しました");
+    } finally {
+      setPosting(false);
     }
-    setPosting(false);
   };
 
   const handleDelete = async (id: string) => {
