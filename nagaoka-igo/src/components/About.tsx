@@ -49,11 +49,10 @@ export default function About() {
 
         {/* Feature cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {features.map((f, i) => (
+          {features.map((f) => (
             <div
               key={f.title}
-              className="bg-white/70 border border-[#e5ddd0] rounded-md p-6 hover-lift animate-fade-in-up"
-              style={{ animationDelay: `${i * 0.1}s` }}
+              className="bg-white/70 border border-[#e5ddd0] rounded-md p-6 hover-lift"
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0 w-11 h-11 rounded-full bg-[#f0ebe0] border border-[#5a7a5a]/30 flex items-center justify-center">

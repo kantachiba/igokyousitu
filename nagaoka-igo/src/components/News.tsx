@@ -24,12 +24,11 @@ export default async function News() {
         <SectionHeading en="News" ja="お知らせ" />
 
         <div className="space-y-0 divide-y divide-[#e5ddd0]">
-          {newsItems.map((item, i) => (
+          {newsItems.map((item) => (
             <Link
               key={item.id}
               href={`/news/${item.id}`}
-              className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 py-5 hover:bg-[#f7f4ef]/60 px-4 -mx-4 rounded-sm transition-colors duration-200 group animate-fade-in-up"
-              style={{ animationDelay: `${i * 0.07}s` }}
+              className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 py-5 hover:bg-[#f7f4ef]/60 px-4 -mx-4 rounded-sm transition-colors duration-200 group"
             >
               {/* Date */}
               <time

@@ -30,7 +30,7 @@ export default function Hero() {
       {/* Hero content */}
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl mx-auto">
         {/* Logo */}
-        <div className="mb-8 animate-fade-in-up">
+        <div className="mb-8">
           <div className="relative w-28 h-28 mx-auto mb-6 ink-border rounded-sm overflow-hidden shadow-lg">
             <Image
               src="/logo.jpg"
@@ -47,7 +47,7 @@ export default function Hero() {
         </div>
 
         {/* Main catchphrase */}
-        <div className="animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
+        <div>
           <h1
             className="text-4xl sm:text-5xl md:text-6xl font-light text-[#1a1a1a] leading-relaxed mb-4"
             style={{ fontFamily: "var(--font-noto-serif)" }}
@@ -66,8 +66,7 @@ export default function Hero() {
 
         {/* CTA Buttons */}
         <div
-          className="mt-10 flex flex-col sm:flex-row gap-4 animate-fade-in-up"
-          style={{ animationDelay: "0.3s" }}
+          className="mt-10 flex flex-col sm:flex-row gap-4"
         >
           <Link
             href="https://x.com/QWXRuoXHUvdP8BH"
