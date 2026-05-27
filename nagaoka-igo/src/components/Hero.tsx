@@ -8,7 +8,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden goban-pattern"
+      className="relative pt-32 pb-20 md:pt-40 md:pb-28 min-h-[600px] flex flex-col items-center justify-center overflow-hidden goban-pattern"
     >
       {/* Decorative go stones background */}
       <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">

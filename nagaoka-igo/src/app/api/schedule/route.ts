@@ -36,6 +36,11 @@ export async function POST(request: Request) {
     );
   }
 
-  const event = await createScheduleEvent({ date, startTime, title, description });
-  return NextResponse.json(event, { status: 201 });
+  try {
+    const event = await createScheduleEvent({ date, startTime, title, description });
+    return NextResponse.json(event, { status: 201 });
+  } catch (err) {
+    console.error("[schedule POST]", err);
+    return NextResponse.json({ error: "サーバーエラーが発生しました" }, { status: 500 });
+  }
 }

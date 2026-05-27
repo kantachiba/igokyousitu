@@ -38,7 +38,10 @@ export async function getEventsByMonth(year: number, month: number): Promise<Sch
 
 export async function createScheduleEvent(data: CreateScheduleEventInput): Promise<ScheduleEvent> {
   const db = getDb();
-  const ref = await db.collection("schedule").add(data);
+  const cleanData = Object.fromEntries(
+    Object.entries(data).filter(([, v]) => v !== undefined)
+  );
+  const ref = await db.collection("schedule").add(cleanData);
   return { id: ref.id, ...data };
 }
 

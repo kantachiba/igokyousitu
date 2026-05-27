@@ -1,0 +1,9 @@
+--- src/components/Hero.tsx
++++ src/components/Hero.tsx
+@@ -9,7 +9,7 @@
+     <section
+       id="hero"
+-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden goban-pattern"
++      className="relative pt-32 pb-20 md:pt-40 md:pb-28 min-h-[600px] flex flex-col items-center justify-center overflow-hidden goban-pattern"
+     >
+       {/* Decorative go stones background */}
