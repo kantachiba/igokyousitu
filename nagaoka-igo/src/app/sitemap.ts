@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 
-const SITE_URL = 'https://backend1--homepage-58f46.asia-east1.hosted.app';
+const SITE_URL = 'https://nagaokaigo.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

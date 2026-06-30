@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Serif_JP, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 
-const SITE_URL = "https://backend1--homepage-58f46.asia-east1.hosted.app";
+const SITE_URL = "https://nagaokaigo.com";
 
 const jsonLd = {
   "@context": "https://schema.org",
